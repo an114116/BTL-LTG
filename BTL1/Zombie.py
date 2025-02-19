@@ -22,8 +22,18 @@ GRAVE_POSITIONS = [
 zombie_img = pygame.image.load('BTL1/zombie.png')
 zombie_img = pygame.transform.scale(zombie_img, (ZOM_WIDTH, ZOM_HEIGHT))
 
+zombie_dead_frames = []
+for i in range(28):
+    frame = pygame.image.load(f'BTL1/zombie-dead/frame_{i}.png')
+    frame = pygame.transform.scale(frame, (ZOM_WIDTH, ZOM_HEIGHT))
+    zombie_dead_frames.append(frame)
+
+
 hammer_img = pygame.transform.scale(pygame.image.load('BTL1/hammer.png'), (80, 80))
 pygame.mouse.set_visible(False)
+
+hit_effect_img = pygame.image.load('BTL1/hit.png')
+hit_effect_img = pygame.transform.scale(hit_effect_img, (60, 60))
 
 pygame.mixer.init()
 pygame.mixer.music.load('BTL1/BGM.mp3')
@@ -31,14 +41,15 @@ hit_sound = pygame.mixer.Sound('BTL1/Hit.mp3')
 
 ZOMBIE_LIFETIME = 3000  
 HAMMER_SWING_TIME = 100  
-HIT_EFFECT_TIME = 150  
-GAME_TIME = 30  
+HIT_EFFECT_TIME = 150
+DEAD_DISPLAY_TIME = 3000 
+GAME_TIME = 30 
 
 font = pygame.font.Font(None, 36)
 
 def draw_hit_effect(hit_x, hit_y, hit_effect_timer):
     if hit_effect_timer and pygame.time.get_ticks() - hit_effect_timer < HIT_EFFECT_TIME:
-        pygame.draw.circle(screen, (255, 0, 0, 200), (hit_x, hit_y), 20)
+        screen.blit(hit_effect_img, (hit_x - hit_effect_img.get_width() // 2, hit_y - hit_effect_img.get_height() // 2))
 
 def animate_hammer(mx, my, hammer_swing, hammer_swing_timer):
     hammer_angle = 60 if hammer_swing else 0
@@ -154,7 +165,15 @@ def main():
                 zombie_x, zombie_y = random.choice(GRAVE_POSITIONS)
 
             if zombie_visible:
-                screen.blit(zombie_img, (zombie_x, zombie_y))
+                if zombie_visible == "dead":
+                    current_frame = (pygame.time.get_ticks() - dead_timer) // 100
+                    if current_frame < len(zombie_dead_frames):
+                        screen.blit(zombie_dead_frames[current_frame], (zombie_x, zombie_y))
+                    else:
+                        zombie_visible = False
+                        zombie_timer = pygame.time.get_ticks()
+                else:
+                    screen.blit(zombie_img, (zombie_x, zombie_y))
 
             draw_hit_effect(hit_x, hit_y, hit_effect_timer)
             hammer_swing, hammer_tip_x, hammer_tip_y = animate_hammer(mx, my, hammer_swing, hammer_swing_timer)
@@ -173,11 +192,11 @@ def main():
                     hammer_swing_timer = pygame.time.get_ticks()
                     if check_hit(zombie_x, zombie_y, zombie_visible, hammer_tip_x, hammer_tip_y):
                         score_hit += 1
-                        zombie_visible = False
+                        zombie_visible = "dead"
+                        dead_timer = pygame.time.get_ticks()
                         hit_effect_timer = pygame.time.get_ticks()
                         hit_x, hit_y = zombie_x + ZOM_WIDTH // 2, zombie_y
                         hit_sound.play()
-                        zombie_timer = pygame.time.get_ticks()
                     else:
                         score_miss += 1
 
