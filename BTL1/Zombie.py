@@ -165,6 +165,8 @@ def main():
                 zombie_x, zombie_y = random.choice(GRAVE_POSITIONS)
 
             if zombie_visible:
+                elapsed_time = pygame.time.get_ticks() - zombie_timer
+
                 if zombie_visible == "dead":
                     current_frame = (pygame.time.get_ticks() - dead_timer) // 100
                     if current_frame < len(zombie_dead_frames):
@@ -173,7 +175,33 @@ def main():
                         zombie_visible = False
                         zombie_timer = pygame.time.get_ticks()
                 else:
-                    screen.blit(zombie_img, (zombie_x, zombie_y))
+                    appear_duration = 500 
+                    vanish_duration = 1000
+                    total_duration = ZOMBIE_LIFETIME + vanish_duration  
+
+                    if elapsed_time < appear_duration:
+                        scale_factor = elapsed_time / appear_duration
+                        new_width = int(ZOM_WIDTH * scale_factor)
+                        new_height = int(ZOM_HEIGHT * scale_factor)
+                        new_y = zombie_y + (ZOM_HEIGHT - new_height)
+                    elif elapsed_time > ZOMBIE_LIFETIME:
+                        scale_factor = max(0, 1 - (elapsed_time - ZOMBIE_LIFETIME) / vanish_duration)
+                        new_width = int(ZOM_WIDTH * scale_factor)
+                        new_height = int(ZOM_HEIGHT * scale_factor)
+                        new_y = zombie_y + (ZOM_HEIGHT - new_height)
+                    else:
+                        scale_factor = 1
+                        new_width, new_height = ZOM_WIDTH, ZOM_HEIGHT
+                        new_y = zombie_y
+
+                    if scale_factor > 0:
+                        zombie_scaled = pygame.transform.scale(zombie_img, (new_width, new_height))
+                        screen.blit(zombie_scaled, (zombie_x + (ZOM_WIDTH - new_width) // 2, new_y))
+                    else:
+                        zombie_visible = False
+                        zombie_x, zombie_y = random.choice(GRAVE_POSITIONS)
+                        zombie_timer = pygame.time.get_ticks()
+                        zombie_visible = True
 
             draw_hit_effect(hit_x, hit_y, hit_effect_timer)
             hammer_swing, hammer_tip_x, hammer_tip_y = animate_hammer(mx, my, hammer_swing, hammer_swing_timer)
