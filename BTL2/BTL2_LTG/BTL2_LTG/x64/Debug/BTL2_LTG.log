@@ -1,0 +1,8 @@
+﻿  main.cpp
+D:\dev\lap_trinh_game\btl2\BTL2_LTG\BTL2_LTG\main.cpp(93,35): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\dev\lap_trinh_game\btl2\BTL2_LTG\BTL2_LTG\main.cpp(94,35): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\dev\lap_trinh_game\btl2\BTL2_LTG\BTL2_LTG\main.cpp(100,36): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\dev\lap_trinh_game\btl2\BTL2_LTG\BTL2_LTG\main.cpp(101,35): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\dev\lap_trinh_game\btl2\BTL2_LTG\BTL2_LTG\main.cpp(110,15): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+D:\dev\lap_trinh_game\btl2\BTL2_LTG\BTL2_LTG\main.cpp(111,15): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+  BTL2_LTG.vcxproj -> D:\dev\lap_trinh_game\btl2\BTL2_LTG\x64\Debug\BTL2_LTG.exe
